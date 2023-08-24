@@ -1,21 +1,10 @@
 const router = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
 
 const { getUserMe, patchUserMe } = require('../controllers/users');
-const { regexEmail } = require('../utils/regexp');
+const { userValidationBodyEmailName } = require('../utils/validationJoi');
 
 router.get('/me', getUserMe);
 
-router.patch(
-  '/me',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().min(2).max(30)
-        .pattern(regexEmail),
-      name: Joi.string().required().min(2).max(30),
-    }),
-  }),
-  patchUserMe,
-);
+router.patch('/me', userValidationBodyEmailName, patchUserMe);
 
 module.exports = router;

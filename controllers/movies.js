@@ -5,10 +5,11 @@ const ErrorBadRequest = require('../errors/error-bad-request');
 const ErrorNotFound = require('../errors/error-not-found');
 const ErrorForbidden = require('../errors/error-forbidden');
 
-function getMovies(_req, res, next) {
-  Movie.find({})
+function getMovies(req, res, next) {
+  const userId = req.user._id;
+  Movie.find({ owner: userId })
     .populate(['owner'])
-    .then((movies) => res.status(OK).send({ data: movies }))
+    .then((movies) => res.status(OK).send({ dataMovies: movies }))
     .catch(() => next(new ErrorInternalServer('Ошибка на сервере, при запросе фильмов')));
 }
 
@@ -56,17 +57,17 @@ async function deleteMovies(req, res, next) {
   const { movieId } = req.params;
   const userId = req.user._id;
   try {
-    const movieData = await Movie.findById(movieId).lean();
+    const movieData = await Movie.findOne({ movieId }).lean();
     const ownerId = movieData?.owner.valueOf();
 
     if (!movieId || !movieData) {
-      return next(new ErrorNotFound('Фильм с таким id не найдена'));
+      return next(new ErrorNotFound('Фильм с таким id не найден'));
     }
 
     if (userId === ownerId) {
-      await Movie.findByIdAndDelete(movieId)
-        .orFail(new ErrorNotFound('Фильм с таким id не найдена'))
-        .then((movie) => res.send({ message: 'Фильм удален', data: movie }))
+      return await Movie.findByIdAndDelete(movieData._id)
+        .orFail(new ErrorNotFound('Фильм с таким id не найден'))
+        .then((movie) => res.send({ message: 'Фильм удален', movieData: movie }))
         .catch((error) => {
           if (error.name === 'CastError') {
             return next(new ErrorBadRequest('Ошибка при вводе данных'));

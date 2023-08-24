@@ -9,18 +9,16 @@ const ErrorConflictRequest = require('../errors/error-conflict-request');
 const ErrorUnauthorized = require('../errors/error-unauthorized');
 
 async function signUp(req, res, next) {
-  const {
-    email, password, name, about, avatar,
-  } = req.body;
+  const { email, password, name } = req.body;
 
   try {
     const hash = await bcrypt.hash(password, 10);
     const user = await User.create({
-      email, password: hash, name, about, avatar,
+      email, password: hash, name,
     });
     return res.status(CREATED).send({
       user: {
-        _id: user._id, email: user.email, name: user.name, about: user.about, avatar: user.avatar,
+        _id: user._id, email: user.email, name: user.name,
       },
     });
   } catch (error) {
@@ -61,7 +59,7 @@ function getUserMe(req, res, next) {
 
   User.findById(userId)
     .orFail(new ErrorNotFound('Пользователь с таким id не найден'))
-    .then((user) => res.status(OK).send({ data: user }))
+    .then((user) => res.status(OK).send({ dataUser: user }))
     .catch((error) => {
       if (error.statusCode === 404) {
         return next(error);
@@ -75,11 +73,14 @@ function getUserMe(req, res, next) {
 
 function patchUserMe(req, res, next) {
   const userId = req.user._id;
-  const { name, about } = req.body;
+  const { email, name } = req.body;
 
-  User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(OK).send({ data: user }))
+  User.findByIdAndUpdate(userId, { email, name }, { new: true, runValidators: true })
+    .then((user) => res.status(OK).send({ dataUser: user }))
     .catch((error) => {
+      if (error.keyValue.email && error.codeName === 'DuplicateKey') {
+        return next(new ErrorBadRequest(`Email «${error.keyValue.email}» уже используется`));
+      }
       if (error.name === 'ValidationError') {
         return next(new ErrorBadRequest(`Ошибка при вводе данных: ${error}`));
       }
