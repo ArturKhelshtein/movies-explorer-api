@@ -7,14 +7,12 @@ const cookies = require('cookie-parser');
 const { errors } = require('celebrate');
 const cors = require('cors');
 
-const router = require('./routes');
+const router = require('./routes/index');
 const { errorMiddleware } = require('./middlewares/errorMiddleware');
 const ErrorNotFound = require('./errors/error-not-found');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./utils/limiter');
 const { DB_URL } = require('./utils/config');
-
-const { PORT = 3000 } = process.env;
 
 mongoose.connect(DB_URL, {
   useNewUrlParser: true,
@@ -36,4 +34,4 @@ app.use(errorLogger);
 app.use(errors());
 app.use(errorMiddleware);
 
-app.listen(PORT, () => console.log(`Application is running on port ${PORT}`));
+module.exports = app;

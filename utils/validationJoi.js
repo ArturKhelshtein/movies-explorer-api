@@ -1,5 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
-const { regexEmail, regexUrl } = require('./regexp');
+const { regexEmail, regexUrl, regexInt16 } = require('./regexp');
 
 const userValidationBodyEmailPasswordName = celebrate({
   body: Joi.object().keys({
@@ -12,9 +12,7 @@ const userValidationBodyEmailPasswordName = celebrate({
 
 const userValidationBodyEmailPassword = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().email().required().min(2)
-      .max(30)
-      .pattern(regexEmail),
+    email: Joi.string().email().required().pattern(regexEmail),
     password: Joi.string().required().min(2),
   }),
 });
@@ -45,7 +43,7 @@ const movieValidationBodyPost = celebrate({
 
 const movieValidationParamsMovieId = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.number().required(),
+    _id: Joi.string().pattern(regexInt16),
   }),
 });
 

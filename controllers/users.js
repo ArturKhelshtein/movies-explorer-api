@@ -25,7 +25,7 @@ async function signUp(req, res, next) {
     if (error.name === 'ValidationError') {
       return next(new ErrorBadRequest(`Ошибка при вводе данных: ${error}`));
     }
-    if (error.keyValue.email) {
+    if (error.code === 11000) {
       return next(new ErrorConflictRequest(`Ошибка, email: «${email}» уже используется`));
     }
     return next(new ErrorInternalServer('Ошибка на сервере, при запросе пользователей'));
@@ -78,7 +78,7 @@ function patchUserMe(req, res, next) {
   User.findByIdAndUpdate(userId, { email, name }, { new: true, runValidators: true })
     .then((user) => res.status(OK).send({ dataUser: user }))
     .catch((error) => {
-      if (error.keyValue.email && error.codeName === 'DuplicateKey') {
+      if (error.code === 11000 && error.codeName === 'DuplicateKey') {
         return next(new ErrorBadRequest(`Email «${error.keyValue.email}» уже используется`));
       }
       if (error.name === 'ValidationError') {

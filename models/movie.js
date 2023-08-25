@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const User = require('./user');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -47,12 +48,12 @@ const movieSchema = new mongoose.Schema({
     },
   },
   owner: {
-    type: String,
+    type: mongoose.ObjectId,
     required: [true, 'поле "owner" должно быть заполнено'],
+    ref: User,
   },
   movieId: {
     type: Number,
-    unique: true,
     required: [true, 'поле "movieId" должно быть заполнено'],
   },
   nameRU: {

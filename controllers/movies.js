@@ -43,9 +43,11 @@ function postMovies(req, res, next) {
     nameRU,
     nameEN,
   })
-    .then((result) => result.populate(['owner']))
-    .then((movie) => res.status(CREATED).send({ data: movie }))
+    .then((movie) => res.status(CREATED).send({ dataMovies: movie }))
     .catch((error) => {
+      if (error.code === 11000) {
+        return next(new ErrorBadRequest(`Ошибка 11000 при вводе данных: ${error}`));
+      }
       if (error.name === 'ValidationError') {
         return next(new ErrorBadRequest(`Ошибка при вводе данных: ${error}`));
       }
@@ -54,13 +56,13 @@ function postMovies(req, res, next) {
 }
 
 async function deleteMovies(req, res, next) {
-  const { movieId } = req.params;
+  const { _id } = req.params;
   const userId = req.user._id;
   try {
-    const movieData = await Movie.findOne({ movieId }).lean();
+    const movieData = await Movie.findById({ _id, owner: userId }).lean();
     const ownerId = movieData?.owner.valueOf();
 
-    if (!movieId || !movieData) {
+    if (!_id || !movieData) {
       return next(new ErrorNotFound('Фильм с таким id не найден'));
     }
 
