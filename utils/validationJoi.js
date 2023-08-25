@@ -19,7 +19,7 @@ const userValidationBodyEmailPassword = celebrate({
 
 const userValidationBodyEmailName = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().min(2).max(30)
+    email: Joi.string().required()
       .pattern(regexEmail),
     name: Joi.string().required().min(2).max(30),
   }),
@@ -41,7 +41,7 @@ const movieValidationBodyPost = celebrate({
   }),
 });
 
-const movieValidationParamsMovieId = celebrate({
+const movieValidationParamsId = celebrate({
   params: Joi.object().keys({
     _id: Joi.string().pattern(regexInt16),
   }),
@@ -52,5 +52,5 @@ module.exports = {
   userValidationBodyEmailPassword,
   userValidationBodyEmailName,
   movieValidationBodyPost,
-  movieValidationParamsMovieId,
+  movieValidationParamsId,
 };

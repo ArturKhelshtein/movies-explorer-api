@@ -5,12 +5,12 @@ const {
   postMovies,
   deleteMovies,
 } = require('../controllers/movies');
-const { movieValidationBodyPost, movieValidationParamsMovieId } = require('../utils/validationJoi');
+const { movieValidationBodyPost, movieValidationParamsId } = require('../utils/validationJoi');
 
 router.get('/', getMovies);
 
 router.post('/', movieValidationBodyPost, postMovies);
 
-router.delete('/:_id', movieValidationParamsMovieId, deleteMovies);
+router.delete('/:_id', movieValidationParamsId, deleteMovies);
 
 module.exports = router;
