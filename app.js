@@ -9,7 +9,6 @@ const cors = require('cors');
 
 const router = require('./routes/index');
 const { errorMiddleware } = require('./middlewares/errorMiddleware');
-const ErrorNotFound = require('./errors/error-not-found');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./utils/limiter');
 const { DB_URL } = require('./utils/config');
@@ -27,7 +26,6 @@ app.use(express.json());
 app.use(cookies());
 app.use(requestLogger);
 app.use(router);
-app.use((req, _res, next) => next(new ErrorNotFound(`Ресурс по адресу ${req.path} не найден`)));
 
 app.use(errorLogger);
 

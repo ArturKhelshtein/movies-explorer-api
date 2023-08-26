@@ -1,24 +1,40 @@
 const router = require('express').Router();
 
-const signUpRouter = require('./signup');
-const signInRouter = require('./signin');
-const signOutRouter = require('./signout');
-const userRouter = require('./users');
-const movieRouter = require('./movies');
 const { auth } = require('../middlewares/auth');
+const {
+  signUp,
+  signIn,
+  getUserMe,
+  patchUserMe,
+  signOut,
+} = require('../controllers/users');
+const {
+  getMovies,
+  postMovies,
+  deleteMovies,
+} = require('../controllers/movies');
 
-router.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
+const {
+  userValidationBodyEmailPasswordName,
+  userValidationBodyEmailPassword,
+  userValidationBodyEmailName,
+  movieValidationBodyPost,
+  movieValidationParamsId,
+} = require('../utils/validationJoi');
 
-router.use('/signup', signUpRouter);
-router.use('/signin', signInRouter);
+const ErrorNotFound = require('../errors/error-not-found');
+
+router.post('/signup', userValidationBodyEmailPasswordName, signUp);
+router.post('/signin', userValidationBodyEmailPassword, signIn);
 
 router.use(auth);
-router.use('/users', userRouter);
-router.use('/movies', movieRouter);
-router.use('/signout', signOutRouter);
+router.get('/users/me', getUserMe);
+router.patch('/users/me', userValidationBodyEmailName, patchUserMe);
+router.get('/movies', getMovies);
+router.post('/movies', movieValidationBodyPost, postMovies);
+router.delete('/movies/:_id', movieValidationParamsId, deleteMovies);
+router.get('/signout', signOut);
+
+router.use((req, _res, next) => next(new ErrorNotFound(`Ресурс по адресу ${req.path} не найден`)));
 
 module.exports = router;
