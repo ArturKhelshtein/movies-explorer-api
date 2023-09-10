@@ -19,7 +19,7 @@ mongoose.connect(DB_URL, {
 
 const app = express();
 
-app.use(cors({ origin: ['http://arturkhelshtein.nomoredomainsicu.ru', 'https://arturkhelshtein.nomoredomainsicu.ru'], credentials: true, maxAge: 30 }));
+app.use(cors({ origin: ['http://arturkhelshtein.nomoredomainsicu.ru', 'https://arturkhelshtein.nomoredomainsicu.ru', 'http://localhost:3000/'], credentials: true, maxAge: 30 }));
 app.use(limiter);
 app.use(helmet());
 app.use(express.json());
