@@ -48,13 +48,11 @@ const movieSchema = new mongoose.Schema(
         message: 'Некорректный URL',
       },
     },
-    owner: [
-      {
-        type: mongoose.ObjectId,
-        required: [true, 'поле "owner" должно быть заполнено'],
-        ref: User,
-      },
-    ],
+    owner: {
+      type: mongoose.ObjectId,
+      required: [true, 'поле "owner" должно быть заполнено'],
+      ref: User,
+    },
     movieId: {
       type: Number,
       required: [true, 'поле "movieId" должно быть заполнено'],
@@ -68,7 +66,7 @@ const movieSchema = new mongoose.Schema(
       required: [true, 'поле "nameEN" должно быть заполнено'],
     },
   },
-  { versionKey: false },
+  { versionKey: false }
 );
 
 module.exports = mongoose.model('movie', movieSchema);
