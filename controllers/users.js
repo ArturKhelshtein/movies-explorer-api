@@ -40,7 +40,7 @@ async function signIn(req, res, next) {
     const payload = { _id: user._id };
     const token = generateToken(payload);
     res.cookie('jwt', token, {
-      maxAge: 604800,
+      maxAge: 1800000,
       httpOnly: true,
       sameSite: true,
     });
