@@ -40,7 +40,7 @@ async function signIn(req, res, next) {
     const payload = { _id: user._id };
     const token = generateToken(payload);
     res.cookie('jwt', token, {
-      maxAge: 1800000,
+      maxAge: 300000,
       httpOnly: true,
       sameSite: true,
     });
@@ -79,7 +79,7 @@ function patchUserMe(req, res, next) {
     .then((user) => res.status(OK).send({ dataUser: user }))
     .catch((error) => {
       if (error.code === 11000 && error.codeName === 'DuplicateKey') {
-        return next(new ErrorBadRequest(`Email «${error.keyValue.email}» уже используется`));
+        return next(new ErrorConflictRequest(`Email «${error.keyValue.email}» уже используется`));
       }
       if (error.name === 'ValidationError') {
         return next(new ErrorBadRequest(`Ошибка при вводе данных: ${error}`));
