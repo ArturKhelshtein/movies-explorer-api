@@ -49,9 +49,10 @@ const movieSchema = new mongoose.Schema(
       },
     },
     owner: {
-      type: mongoose.ObjectId,
+      // type: mongoose.ObjectId,
+      type: String,
       required: [true, 'поле "owner" должно быть заполнено'],
-      ref: User,
+      // ref: User,
     },
     movieId: {
       type: Number,
