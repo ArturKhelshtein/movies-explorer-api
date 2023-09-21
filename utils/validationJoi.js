@@ -12,7 +12,7 @@ const userValidationBodyEmailPasswordName = celebrate({
 
 const userValidationBodyEmailPassword = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().email().required().pattern(regexEmail),
+    email: Joi.string().required().pattern(regexEmail),
     password: Joi.string().required().min(2),
   }),
 });
